@@ -142,7 +142,7 @@ class AssetManager extends Singleton
      */
     public function getJsInclusionDirective()
     {
-        $result = "<script type=\"text/javascript\">\n" . StaticContainer::get('Piwik\Translation\Translator')->getJavascriptTranslations() . "\n</script>";
+        $result = "<script defer type=\"text/javascript\">\n" . StaticContainer::get('Piwik\Translation\Translator')->getJavascriptTranslations() . "\n</script>";
 
         if ($this->isMergedAssetsDisabled()) {
             $this->getMergedCoreJSAsset()->delete();
@@ -150,8 +150,8 @@ class AssetManager extends Singleton
 
             $result .= $this->getIndividualCoreAndNonCoreJsIncludes();
         } else {
-            $result .= sprintf(self::JS_IMPORT_DIRECTIVE, self::GET_CORE_JS_MODULE_ACTION);
-            $result .= sprintf(self::JS_IMPORT_DIRECTIVE, self::GET_NON_CORE_JS_MODULE_ACTION);
+            $result .= sprintf(self::JS_DEFER_IMPORT_DIRECTIVE, self::GET_CORE_JS_MODULE_ACTION);
+            $result .= sprintf(self::JS_DEFER_IMPORT_DIRECTIVE, self::GET_NON_CORE_JS_MODULE_ACTION);
 
             $result .= $this->getPluginUmdChunks();
         }

@@ -19,6 +19,8 @@ use Piwik\Date;
 use Piwik\Option;
 use Piwik\Piwik;
 use Piwik\Plugins\CoreHome\SystemSummary;
+use Piwik\Plugins\SitesManager\SiteContentDetection\SiteContentDetectionAbstract;
+use Piwik\Plugins\SitesManager\SiteContentDetection\Wordpress;
 use Piwik\Settings\Storage\Backend\MeasurableSettingsTable;
 use Piwik\SettingsPiwik;
 use Piwik\Tracker\Cache;
@@ -45,7 +47,6 @@ class SitesManager extends \Piwik\Plugin
     const SITE_TYPE_SHOPIFY = 'shopify';
     const SITE_TYPE_WEBFLOW = 'webflow';
     const SITE_TYPE_DRUPAL = 'drupal';
-    const JS_FRAMEWORK_UNKNOWN = 'unknown';
     const JS_FRAMEWORK_VUE = 'vue';
     const JS_FRAMEWORK_REACT = 'react';
 
@@ -62,8 +63,6 @@ class SitesManager extends \Piwik\Plugin
             'SitesManager.deleteSite.end'            => 'onSiteDeleted',
             'System.addSystemSummaryItems'           => 'addSystemSummaryItems',
             'Request.dispatch'                       => 'redirectDashboardToWelcomePage',
-            'Template.noDataPageGTMTabInstructions'  => 'noDataPageGTMTabInstructions',
-            'Template.noDataPageWordpressTabInstructions'  => 'noDataPageWordpressTabInstructions',
         ];
     }
 
@@ -375,38 +374,6 @@ class SitesManager extends \Piwik\Plugin
         return $hosts;
     }
 
-    public static function getInstructionUrlBySiteType($siteType)
-    {
-        $map = [
-            self::SITE_TYPE_JOOMLA => 'https://matomo.org/faq/new-to-piwik/how-do-i-install-the-matomo-analytics-tracking-code-on-joomla',
-            self::SITE_TYPE_SHAREPOINT => 'https://matomo.org/faq/how-to-install/faq_19424',
-            self::SITE_TYPE_SHOPIFY => 'https://matomo.org/faq/new-to-piwik/how-do-i-install-the-matomo-tracking-code-on-my-shopify-store',
-            self::SITE_TYPE_SQUARESPACE => 'https://matomo.org/faq/new-to-piwik/how-do-i-integrate-matomo-with-squarespace-website',
-            self::SITE_TYPE_WIX => 'https://matomo.org/faq/new-to-piwik/how-do-i-install-the-matomo-analytics-tracking-code-on-wix',
-            self::SITE_TYPE_WORDPRESS => 'https://matomo.org/faq/new-to-piwik/how-do-i-install-the-matomo-tracking-code-on-wordpress/',
-            self::SITE_TYPE_DRUPAL => 'https://matomo.org/faq/new-to-piwik/how-to-integrate-with-drupal/',
-            self::SITE_TYPE_WEBFLOW => 'https://matomo.org/faq/new-to-piwik/how-do-i-install-the-matomo-tracking-code-on-webflow',
-        ];
-
-        return $map[$siteType] ?? false;
-    }
-
-    public static function getInstructionByCms(?string $cms): string
-    {
-        if ($cms === self::SITE_TYPE_UNKNOWN || $cms === self::SITE_TYPE_WORDPRESS) {
-            return '';
-        }
-
-        return Piwik::translate(
-            'SitesManager_SiteWithoutDataDetectedSite',
-            [
-                ucfirst($cms),
-                '<a target="_blank" rel="noreferrer noopener" href="' . self::getInstructionUrlBySiteType($cms) . '">',
-                '</a>'
-            ]
-        );
-    }
-
     public function getClientSideTranslationKeys(&$translationKeys)
     {
         $translationKeys[] = "General_Save";
@@ -523,39 +490,5 @@ class SitesManager extends \Piwik\Plugin
         $translationKeys[] = "SitesManager_DemoSiteButtonText";
         $translationKeys[] = "SitesManager_SiteWithoutDataVueDescription";
         $translationKeys[] = "SitesManager_SiteWithoutDataReactDescription";
-    }
-
-    public function noDataPageGTMTabInstructions(&$out)
-    {
-        Piwik::checkUserHasSomeViewAccess();
-        $piwikUrl = Url::getCurrentUrlWithoutFileName();
-        $jsTag = Request::processRequest('SitesManager.getJavascriptTag', ['idSite' => Common::getRequestVar('idSite'), 'piwikUrl' => $piwikUrl]);
-        $view = new View("@SitesManager/_gtmTabInstructions");
-        $view->jsTag = $jsTag;
-        $out = $view->render();
-    }
-
-    public function noDataPageWordpressTabInstructions(&$out)
-    {
-        Piwik::checkUserHasSomeViewAccess();
-        $view = new View("@SitesManager/_wordpressTabInstructions");
-        $faqLink = 'https://matomo.org/faq/general/faq_114/';
-        $authLink = '';
-        if (Piwik::isUserHasSomeViewAccess()) {
-            $request = \Piwik\Request::fromRequest();
-            $idSite = $request->getIntegerParameter('idSite', 0);
-            $period = $request->getStringParameter('period', 'day');
-            $date = $request->getStringParameter('date', 'yesterday');
-            $authLink = SettingsPiwik::getPiwikUrl() . 'index.php?' . Url::getQueryStringFromParameters([
-                    'idSite' => $idSite,
-                    'date' => $date,
-                    'period' => $period,
-                    'module' => 'UsersManager',
-                    'action' => 'addNewToken',
-                ]);
-        }
-        $view->authLink = $authLink;
-        $view->faqLink = $faqLink;
-        $out = $view->render();
     }
 }

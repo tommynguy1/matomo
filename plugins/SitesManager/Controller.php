@@ -248,7 +248,7 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
             $consentManager = $this->siteContentDetector->getSiteContentDetectionById($consentManagerId);
             $templateData['consentManagerName'] = $consentManager::getName();
             $templateData['consentManagerUrl'] = $consentManager::getInstructionUrl();
-            $templateData['consentManagerIsConnected'] = in_array($consentManagerId, $this->siteContentDetector->connectedContentManagers);
+            $templateData['consentManagerIsConnected'] = in_array($consentManagerId, $this->siteContentDetector->connectedConsentManagers);
         }
 
         $templateData['tabs'] = [];

@@ -16,7 +16,7 @@ describe("EmptySite_CloudflareOverGTM", function () {
     it('should select the tab provided by hash param', async function () {
         const urlToTest = "?" + generalParams + "&module=CoreHome&action=index#?" + generalParams + "&activeTab=cloudflare";
         await page.goto(urlToTest);
-
+        await page.waitForTimeout(250);
         const pageElement = await page.$('.page');
         expect(await pageElement.screenshot()).to.matchImage('emptySiteDashboard');
     });

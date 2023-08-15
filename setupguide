@@ -1,0 +1,42 @@
+Matomo Initial Setup Guide for Newcomers
+
+1. Sign Up and Installation:
+
+If you don't have Matomo yet, start by downloading it from the official website.
+Follow the installation instructions to get Matomo up and running on your server.
+
+2. Website Setup:
+
+ After logging into your Matomo dashboard, navigate to the "Websites" section.
+Click on "Add a new website."
+Fill in the necessary details such as the website's name, URL, and time zone.
+
+3. JavaScript Tracking Code:
+
+Once your website has been added, Matomo will provide you with a JavaScript tracking code.
+Copy this code and paste it just before the closing </head> tag on every page of your website you wish to track.
+
+4. User Privacy:
+
+Navigate to the "Privacy" section.
+Configure your settings to comply with data protection laws relevant to your audience (e.g., GDPR for European users). This may include anonymizing IP addresses or providing an opt-out mechanism for visitors.
+
+5. Set Up Goals (Optional but Recommended):
+
+If you have specific actions or conversions you want to track (like form submissions or product purchases), navigate to the "Goals" section.
+Define your goals by specifying the action that signifies a conversion (e.g., visiting a specific URL or downloading a file).
+
+6. Ecommerce Tracking (If Applicable):
+
+Navigate to the "Ecommerce" section if your website has an online store.
+Follow the instructions to integrate Matomo with your shopping cart and product pages to track sales and revenue.
+
+7. Review & Test:
+
+Visit your website and perform some actions.
+Return to your Matomo dashboard to see if these actions are recorded under the "Visits Log" section.
+
+8. Set Up Email Reports (Optional):
+
+Navigate to the "Email Reports" section.
+Configure reports to be sent to your email at specified intervals, summarizing website performance and visitor behavior.
